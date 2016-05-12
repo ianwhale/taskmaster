@@ -1,4 +1,7 @@
-import gather
+import sys
+sys.dont_write_bytecode = True
+
+import collector
 
 def main():
     print """
@@ -8,10 +11,9 @@ def main():
 
     """
 
-    gather.findAvida()
+    gatherer = collector.Collector()
 
 
     return
-
 
 main()
