@@ -59,9 +59,39 @@ class Collector:
         # If we encounter an env-nav that is different, that means there are two
         #   experiment results in the data_out directory and we should quit.
         #
-        env = ""
+        env = "" # The env-nav.cfg file used for comparison.
+        dirs = [] # The directories we're looking for.
         for dir in os.listdir(data_out_path):
             dir = os.path.join(data_out_path + '/' + dir)
+
+            if os.path.isdir(dir):
+                #TODO: Allow user to choose which run they want if 2 or more env files conflict.
+
+                temp_env = os.path.join(dir + '/env-nav.cfg')
+
+                if env == "":
+                    env = temp_env
+
+                else:
+                    if filecmp.cmp(env, temp_env):
+                        # The two env-nav files that were found are identical.
+                        # We can add the data_out directory to our collection.
+                        dirs.append(dir)
+
+                    else:
+                        # The env-name files there were found are not identical.
+                        # Inform the user and quit.
+
+                        print"""
+
+        Found two conflicting env-nav.cfg files:
+        """ + env + """
+        """ + temp_env + """
+        You may have two separate run outputs in your data_out directory.
+        Remove one of the run results to continue.
+        """
+                        return [] #Quit
+
 
 
         return []
