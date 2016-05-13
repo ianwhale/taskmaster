@@ -7,12 +7,12 @@ def main():
     print """
 
     Welcome to Taskmaster.
-    Attempting to locate your Avida file now...
 
     """
 
-    gatherer = collector.Collector()
+    env_name = raw_input("Enter the absolute path of your Avida destination path: ")
 
+    collect = collector.Collector(env_name)
 
     return
 
