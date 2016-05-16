@@ -4,14 +4,18 @@ sys.dont_write_bytecode = True
 import collector
 import parser
 
-def main():
+def main(argv):
     print """
 
     Welcome to Taskmaster.
 
     """
 
-    env_name = raw_input("Please enter the absolute path of your Avida destination directory: ")
+    if len(argv) == 1: ## No file was given, prompt for it.
+        env_name = raw_input("Please enter the absolute path of your Avida destination directory: ")
+
+    else:
+        env_name = argv[1]
 
     collect = collector.Collector(env_name)
 
@@ -22,4 +26,4 @@ def main():
 
     return
 
-main()
+main(sys.argv)

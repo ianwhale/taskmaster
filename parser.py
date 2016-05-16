@@ -51,7 +51,16 @@ class Parser:
 
         print "Found " + str(grids / 2) + " grids..."
 
+        ## Output some Avida style file information.
+        out += "# Data column information: \n"
+
+        i = 0
+        for i in range(grids/2):
+            out += "# " + str(i + 1) + ": State Grid " + str(i + 1) + " Max Task Quality\n"
+        out += "# " + str(i + 2) + ": Average For Single Run\n\n"
+
         max_quality = 0
+        all_qualities = {} ## Keep track of all qualities.
         where_max = "" ## Retains which TQ file has the maximum fitness.
         grid_max = 0 ## Retains which grid had the max fitness.
 
@@ -65,7 +74,7 @@ class Parser:
             qualities = self.parsed[key]
             count = 0
 
-            out += key + ": "
+            ## out += key + ": "
             for i in range(0, grids, 2): ## step by twos, then add one for odd values
                 if qualities[i + 1] > max_quality:
                     max_quality = qualities[i + 1]
@@ -73,16 +82,14 @@ class Parser:
                     grid_max = int(ceil(i / 2)) + 1
 
                 out += str(qualities[i + 1]) + " "
-
                 count += qualities[i + 1]
 
-            out += "Average: " + str(count / (grids / 2)) + "\n"
+            out += str(count / (grids / 2)) + "\n" ## Average
 
 
         out += "\n"
-        out += "Max task quality: " + str(max_quality) + "\n"
-        out += "Found in: " + str(where_max) + " on grid number " + str(grid_max) + "\n"
-
+        out += "# Max task quality: " + str(max_quality) + "\n"
+        out += "# Found in: " + str(where_max) + " on grid number " + str(grid_max) + "\n"
         target = open("./" + self.out_dir + "/taskmaster_out", "w")
         target.truncate()
         target.write(out)
