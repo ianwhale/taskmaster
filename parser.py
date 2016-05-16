@@ -55,8 +55,9 @@ class Parser:
         out += "# Data column information: \n"
 
         i = 0
-        for i in range(grids/2):
-            out += "# " + str(i + 1) + ": State Grid " + str(i + 1) + " Max Task Quality\n"
+        out += "# 1: The Seed Value\n"
+        for i in range(1, grids/2 + 1):
+            out += "# " + str(i + 1) + ": State Grid " + str(i) + " Max Task Quality\n"
         out += "# " + str(i + 2) + ": Average For Single Run\n\n"
 
         max_quality = 0
@@ -74,7 +75,7 @@ class Parser:
             qualities = self.parsed[key]
             count = 0
 
-            ## out += key + ": "
+            out += str([ int(s) for s in key.split("_") if s.isdigit()][0]) + ": "
             for i in range(0, grids, 2): ## step by twos, then add one for odd values
                 if qualities[i + 1] > max_quality:
                     max_quality = qualities[i + 1]
