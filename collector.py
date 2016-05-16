@@ -7,6 +7,7 @@ class Collector:
         """
         Collector constructor.
         Initializes the collection process by verifying the Avida directory and getting the task_quality files.
+        :param: Where the collector should look for the tasks_quality files.
         """
         self.runs_path = runspath
 
@@ -16,8 +17,6 @@ class Collector:
 
         if not self.task_qualities:
             return ## Nothing was found in the data_out directory.
-
-        self.move_and_rename_files()
 
     def collect_task_qualities(self):
         """
@@ -31,7 +30,7 @@ class Collector:
             if os.path.isdir(dir):
                 dirs[dir] = os.path.join(dir, "data/tasks_quality.dat")
 
-        print str(len(dirs)) + " output directories have been found."
+        print str(len(dirs)) + " output directories have been found, now copying..."
 
         return dirs
 
@@ -42,7 +41,8 @@ class Collector:
         So we'll rename them with the format *containing_folder*_tasks_quality.dat
         """
         dir = "task_qualities_" + time.strftime("%m_%d_%Y_%H_%M_%S") #$ This will contain all our tasks_quality files
-        os.makedirs(dir)
+
+        os.mkdir(dir)
 
         for key in self.task_qualities:
             ## This is a little lengthy and gross.
@@ -52,4 +52,9 @@ class Collector:
         return dir
 
     def get_out_path(self):
+        """
+        Out path variable getter.
+        Gets where the task quality files were output.
+        :return: string
+        """
         return self.out_path
