@@ -20,6 +20,8 @@ class Parser:
         """
         results = {}
 
+        last_run_vals = {} ## new dictionary of the last run values for error checking purposes.
+
         for dir in os.listdir(self.out_dir):
             with open(os.path.join(self.out_dir, dir)) as f:
                 last = None
@@ -29,7 +31,9 @@ class Parser:
                     pass
 
                 last = last.split()
-                last.pop(0) ## We don't want the first element of the last line.
+                temp = last.pop(0) ## We don't want the first element of the last line.
+
+                last_run_vals[str([ int(s) for s in dir.split("_") if s.isdigit()][0])] = temp
 
                 for i in range(len(last)):
                     last[i] = float(last[i]) ## Convert strings to floats.
@@ -37,6 +41,23 @@ class Parser:
                 results[dir] = last
 
         self.parsed = results
+
+        ## Error check to see if all of the runs have the same ending value.
+        max_end_val = max(last_run_vals.values(), key = int)
+        unmatching = [] ## Values that don't match max_key
+
+        for key in last_run_vals.keys():
+            if last_run_vals[key] != max_end_val:
+                unmatching.append(int(key))
+
+        unmatching.sort()
+
+        if len(unmatching) > 0:
+            print ""
+            print "*** Warning: the run was detected to be unfinished, some of your task quality files are incomplete."
+            print """    Seeds flagged as incomplete: """ + str(unmatching)
+            print ""
+
 
     def obtain_information(self):
         """
@@ -61,10 +82,8 @@ class Parser:
         out += "# " + str(i + 2) + ": Average For Single Run\n\n"
 
         max_quality = 0
-        all_qualities = {} ## Keep track of all qualities.
         where_max = "" ## Retains which TQ file has the maximum fitness.
         grid_max = 0 ## Retains which grid had the max fitness.
-
 
         ## We want to go through in order of output by Avida.
         ## So we sort based on the number in our output files name.
@@ -75,7 +94,9 @@ class Parser:
             qualities = self.parsed[key]
             count = 0
 
-            out += str([ int(s) for s in key.split("_") if s.isdigit()][0]) + ": "
+            seed = str([ int(s) for s in key.split("_") if s.isdigit()][0])
+
+            out += seed + ": "
             for i in range(0, grids, 2): ## step by twos, then add one for odd values
                 if qualities[i + 1] > max_quality:
                     max_quality = qualities[i + 1]
@@ -97,4 +118,3 @@ class Parser:
         target.close()
 
         print "Results successfully output to ./" + self.out_dir + "/taskmaster_out"
-
